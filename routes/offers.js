@@ -13,9 +13,6 @@ const User = require("../models/User");
 //import du MiddleWare
 const isAuthenticated = require("../middleware/isAuthenticated");
 
-//Configuration de cloudinary
-CLOUDINARY_URL = process.env.CLOUDINARY_URL;
-
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   console.log("user =>", req.user);
   try {
