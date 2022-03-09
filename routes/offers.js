@@ -14,11 +14,7 @@ const User = require("../models/User");
 const isAuthenticated = require("../middleware/isAuthenticated");
 
 //Configuration de cloudinary
-cloudinary.config({
-  cloud_name: "dsoqe91wl",
-  api_key: "642673918564474",
-  api_secret: "SXsgXB4g_-3UG9ySQWsPhOiS52I",
-});
+CLOUDINARY_URL = process.env.CLOUDINARY_URL;
 
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   console.log("user =>", req.user);

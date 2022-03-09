@@ -1,4 +1,6 @@
+/*Activation des variables d'environnement qui se trouvent dans le fichier .env */
 require("dotenv").config();
+
 const express = require("express");
 const formidableMiddleware = require("express-formidable");
 const mongoose = require("mongoose");
