@@ -1,7 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const formidableMiddleware = require("express-formidable");
 const mongoose = require("mongoose");
-require("dotenv").config();
 //connexion à la bdd
 mongoose.connect(process.env.MONGODB_URI);
 
