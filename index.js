@@ -7,6 +7,14 @@ const mongoose = require("mongoose");
 //connexion à la bdd
 mongoose.connect(process.env.MONGODB_URI);
 
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
 //création du serveur
 const app = express();
 app.use(formidableMiddleware());
