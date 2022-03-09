@@ -1,9 +1,6 @@
 /*Activation des variables d'environnement qui se trouvent dans le fichier .env */
 require("dotenv").config();
 
-//Configuration de cloudinary
-CLOUDINARY_URL = process.env.CLOUDINARY_URL;
-
 const express = require("express");
 const formidableMiddleware = require("express-formidable");
 const mongoose = require("mongoose");
