@@ -8,14 +8,6 @@ const uid2 = require("uid2");
 //Import du modèle User
 const User = require("../models/User");
 
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
 router.post("/user/signup", async (req, res) => {
   try {
     // On vérifie qu'on envoie bien un username
