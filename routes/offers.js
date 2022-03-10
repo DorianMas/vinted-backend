@@ -34,7 +34,11 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
     //j'envoie mon image sur cloudinary
     let pictureToUpload = req.files.product_image.path;
     console.log("Image ajoutée =>", pictureToUpload);
-    const result = await cloudinary.uploader.upload(pictureToUpload);
+    const result = await cloudinary.uploader.upload(pictureToUpload, {
+      folder: `api/vinted/offers/${newOffer._id}`,
+      public_id: "preview",
+      cloud_name: "lereacteur",
+    });
     console.log("result ==>", result);
 
     console.log(req.files);
@@ -132,6 +136,89 @@ router.get("/offer/:id", async (req, res) => {
     res.json(offer);
   } catch (error) {
     res.status(400).json(error.message);
+  }
+});
+
+//Route pour supprimer une offre
+router.delete("/offer/delete/:id", isAuthenticated, async (req, res) => {
+  try {
+    //Je supprime ce qui il y a dans le dossier
+    await cloudinary.api.delete_resources_by_prefix(
+      `api/vinted/offers/${req.params.id}`
+    );
+    //Une fois le dossier vide, je peux le supprimer !
+    await cloudinary.api.delete_folder(`api/vinted/offers/${req.params.id}`);
+
+    offerToDelete = await Offer.findById(req.params.id);
+
+    await offerToDelete.delete();
+
+    res.status(200).json("Offer deleted succesfully !");
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+//Route pour modifier une offre
+router.put("/offer/update/:id", isAuthenticated, async (req, res) => {
+  const offerToModify = await Offer.findById(req.params.id);
+  try {
+    if (req.fields.product_name) {
+      offerToModify.product_name = req.fields.product_name;
+    }
+    if (req.fields.product_description) {
+      offerToModify.product_description = req.fields.product_description;
+    }
+    if (req.fields.product_price) {
+      offerToModify.product_price = req.fields.product_price;
+    }
+
+    const details = offerToModify.product_details;
+    for (i = 0; i < details.length; i++) {
+      if (details[i].MARQUE) {
+        if (req.fields.brand) {
+          details[i].MARQUE = req.fields.brand;
+        }
+      }
+      if (details[i].TAILLE) {
+        if (req.fields.size) {
+          details[i].TAILLE = req.fields.size;
+        }
+      }
+      if (details[i].ÉTAT) {
+        if (req.fields.condition) {
+          details[i].ÉTAT = req.fields.condition;
+        }
+      }
+      if (details[i].COULEUR) {
+        if (req.fields.color) {
+          details[i].COULEUR = req.fields.color;
+        }
+      }
+      if (details[i].EMPLACEMENT) {
+        if (req.fields.location) {
+          details[i].EMPLACEMENT = req.fields.location;
+        }
+      }
+    }
+
+    // Notifie Mongoose que l'on a modifié le tableau product_details
+    offerToModify.markModified("product_details");
+
+    if (req.files.picture) {
+      const result = await cloudinary.uploader.upload(req.files.picture.path, {
+        public_id: `api/vinted/offers/${offerToModify._id}/preview`,
+      });
+      offerToModify.product_image = result;
+    }
+
+    await offerToModify.save();
+
+    res.status(200).json("Offer modified succesfully !");
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ error: error.message });
   }
 });
 
